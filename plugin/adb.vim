@@ -15,7 +15,9 @@ if(!exists('g:apkPathList'))
 	let g:apkPathList=[]
 endif
 "应用安装
-:command! -nargs=+ -complete=file AdbInstall :call AdbInstall(<q-args>)
+let s:dir=expand('<sfile>:h') 
+:command! -nargs=+ -complete=file ApkReverse  :execute "!java -jar ".s:dir . "/apktool.jar d "<q-args>
+:command! -nargs=+ -complete=file AdbInstall :call AdbInstall(<f-args>)
 ":command! -nargs=+ -complete=file AdbInstall :let result=split(system('adb install '.fnamemodify(<q-args>,':p')),'\n') | let result=result[1:2]+result[-4:-1] |for item in result | echo item |endfor
 "应用卸载
 :command! -nargs=1 -complete=var	AdbUninstall :call AdbUninstall(<f-args>)
@@ -76,7 +78,9 @@ function! AdbActivity()
 	:for i in range(tabpagenr('$'))
 	:   call extend(buflist, tabpagebuflist(i + 1))
 	:endfor
-	:execute " 1|/Running/;/mResume"
+	":let @/ = "View Hierarchy"
+	":execute " 1|/mResume/;/View Hierarchy"
+	:execute " 1|/mResumedActivity/"
 	":echo buflist
 endfunction
 function! AdbMemory(package)
@@ -101,8 +105,10 @@ function! AdbMemory(package)
 	":echo buflist
 endfunction
 
+let g:adbInstallOption="-t"
+
 "install by apk path
-function! AdbInstall(package)
+function! AdbInstall(package,...)
 	:let l:package=a:package==0?fnamemodify(a:package,':p'):a:package
 	:if(l:package>0&&len(g:apkPathList)>=l:package)
 	:let l:package=g:apkPathList[l:package-1]
@@ -119,7 +125,7 @@ function! AdbInstall(package)
 	:endif
 	:endif
 	echo l:package
-	:let result=split(system('adb install '.l:package),'\n') 
+	:let result=split(system('adb install '.g:adbInstallOption.' '.l:package ),'\n') 
 	:let result=len(result)>5?result[0:1]+result[-4:-1] : result
 	:for item in result 
 	:echo item 

@@ -29,7 +29,7 @@ let g:crashLineNumber=l:pos
 echo "crash line number:".l:pos
 "execute "normal".l:pos."G"
 endif
-: let s:search='uncaughtException\|fatal\|excep\|'.s:shutDown.'\c'
+: let s:search='uncaughtException\|fatal\|'.s:shutDown.'\c'
 : else 
 : let s:search=a:a
 : endif
@@ -49,7 +49,7 @@ endfunction
 function! PositionDrawable(drawable,path)
  :let  s:cword='"'.a:drawable.'"\|/\s*'.a:drawable.'\s*"\|/\s*'.a:drawable."\\s*<"
  :echo s:cword
- :let s:path=a:path."/src/** " .a:path."/res/**  ". a:path."/platform/src/**"
+ :let s:path=a:path."/**/*.xml  ". a:path."/**/*.java"
  :exec "vimgrep '".s:cword ."'  ".s:path 
 endfunction
 
